@@ -2,28 +2,37 @@
 
 **足球经纪人职业模拟游戏 / A football agent career simulation**
 
-玩家经营一家经纪公司，在薪资、出场机会、球员成长和长期现金流之间做选择。这是项目作品集：包含真实游戏截图、开发案例，以及用虚构数据编写的独立谈判演示。
+经营一家足球经纪公司：发现球员、评估成长机会、比较报价、处理合同，再让事务所活过一个又一个赛季。
 
-[查看开发案例](docs/development.md) · [查看谈判演示文件](demo/index.html)
+[下载单文件交互展厅](https://raw.githubusercontent.com/GeorgeDy7an/football-transfer-desk/main/showcase.html) · [中英双语游戏画廊](docs/gallery.md) · [开发案例](docs/development.md) · [系统设计与迭代](docs/systems.md)
 
-| 事务所 / Agency dashboard | 球员档案 / Player profile |
-| :---: | :---: |
-| <img src="media/office.png" alt="正式版事务所与本周事项" width="290"> | <img src="media/player.png" alt="正式版球员档案与职业诉求" width="290"> |
+## 交互展厅 / Interactive showcase
 
-### 试玩一个决策
+将 `showcase.html` 保存到本地并用浏览器打开即可。一个 HTML，支持中文 / English，无须安装或联网。选择一个场景，动手作出决定，再切换语言或重置重试。
 
-下载此展示仓库并解压，打开 `demo/index.html`。选择一份报价，决定直接接受或加价反谈。你可以切换中文或英文，也可以重置重试。无需安装、联网或登录。
+| 场景 | 可以亲手做什么 |
+| --- | --- |
+| 球探 | 比较两份报告，加入观察名单或用预算复查 |
+| 球队报价 | 比较周薪、年限和出场定位；直接接受或反报价 |
+| 训练配置 | 在两个客户间分配一个重点名额，或购买额外名额 |
+| 合同到期 | 续签或结束代理关系，观察球队合同不受影响 |
+| 保存重试 | 模拟一次写入失败，再保存同一周快照，检查现金没有重复扣除 |
+| 生涯结算 | 生成五年或十年的模拟个人战报 |
 
-### 项目案例
+[![交互展厅英文界面：比较三份球队报价](media/showcase-en.jpg)](media/showcase-en.jpg)
 
-- **职业路径**：把球员的能力、潜力和出场机会分开，设计有取舍的球队报价。
-- **长期存档**：处理坏档隔离、旧档升级、保存核验和重试重复结算。
-- **离线版**：拆掉平台依赖，让中英文共用本地存档，把广告机会改成游戏内预算或行动次数。
+展厅用虚构数据和独立脚本模拟局部流程，与正式游戏的 HTML、数据、规则和存档分开。[单场景谈判代码示例](demo/negotiation.js)及其[测试](tests/negotiation.test.cjs)也可单独阅读。
 
-### English
+## 正式版游戏 / Full-game gallery
 
-I built a football agent career simulation around a recurring choice: take the bigger contract now, or find a club that gives the player a better path. The project spans game-system design, a mobile-first interface, long-running career saves and a bilingual offline build.
+以下为正式版实机截图，不是展厅渲染。**[查看全部 12 张中英截图](docs/gallery.md)**：首页、事务所、收件箱、球员档案、训练配置和生涯海报。
 
-The screenshots show the full game. The small negotiation demo uses fictional offers and simplified rules. Download and extract this showcase, then open `demo/index.html` to run it locally. [Read the development case studies](docs/development.md).
+| 中文 · 事务所 | English · Agency | English · Player profile |
+| :---: | :---: | :---: |
+| <img src="media/zh-office.jpg" alt="正式版中文事务所" width="240"> | <img src="media/en-office.jpg" alt="Full game: English agency dashboard" width="240"> | <img src="media/en-player.jpg" alt="Full game: English player profile" width="240"> |
+
+## English
+
+Transfer Desk is a football agency simulation about the trade-offs between wages, playing time, player development and agency cash flow. The [interactive showcase](showcase.html) lets you try six fictional scenarios in English or Chinese. Save that one HTML file and open it locally. See the [bilingual screenshot gallery](docs/gallery.md) for the full game and the [development notes](docs/development.md) for the design and engineering decisions behind it.
 
 The production source, data and full game builds are private. See [rights and permitted use](NOTICE.md).

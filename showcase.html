@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>转会桌 · 交互展厅</title>
+<style>
+:root{color-scheme:light;--ink:#142e29;--muted:#435d54;--line:#a4b7ad;--paper:#f2f5ed;--white:#fff;--pitch:#0d4437;--lime:#c9e882;--focus:#155ca0;font:16px/1.55 system-ui,sans-serif;color:var(--ink);background:var(--paper)}
+*{box-sizing:border-box}body{margin:0}main{width:min(100% - 2rem,74rem);margin:auto;padding:1rem 0 3rem}header{padding:clamp(1.25rem,4vw,3rem);border-radius:18px 18px 0 0;background:var(--pitch);color:var(--white);position:relative;overflow:hidden}header:after{content:"";border:1px solid #83ad9a;border-radius:50%;width:230px;height:230px;position:absolute;right:-115px;bottom:-94px;pointer-events:none}header h1{font-size:clamp(2rem,7vw,4rem);line-height:1.05;margin:.75rem 0}header p{max-width:58ch;margin:0}small{font-size:.85rem}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}button{font:inherit;min-height:44px;border:1px solid var(--line);border-radius:8px;background:var(--white);color:var(--ink);padding:.5rem .75rem;text-align:left;cursor:pointer}button:disabled{cursor:default;opacity:.6}button:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:3px}header button:focus-visible{outline-color:var(--lime)}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:.85rem 0}nav button[aria-current=true],.primary{background:var(--lime);border-color:var(--pitch);font-weight:750}.scene{background:var(--white);padding:clamp(1rem,3vw,2rem);border:1px solid var(--line);border-radius:12px}h2{font-size:clamp(1.55rem,4vw,2.1rem);margin:0}p{margin:.6rem 0}.scene p{max-width:68ch}.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:8px;margin:1rem 0}.fact{padding:.8rem 1rem;background:var(--paper);border-left:3px solid var(--pitch);min-width:0}.fact span,.choice span{display:block;color:var(--muted)}.fact strong{display:block;font-size:1.15rem;overflow-wrap:anywhere}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr));gap:10px;margin:1rem 0}.choice{padding:.8rem}.choice strong{display:block}.choice[aria-pressed=true]{border:2px solid var(--pitch);padding:calc(.8rem - 1px);background:#eaf4d6}.actions{display:flex;flex-wrap:wrap;gap:8px;margin:1rem 0}#result{padding:.8rem 1rem;margin-top:1rem;border-left:4px solid var(--pitch);background:var(--paper);min-height:3rem}footer{color:var(--muted);margin-top:1rem}button:active:not(:disabled){filter:brightness(.94)}
+</style>
+<main>
+<header><div class="top"><strong>Transfer Desk / 转会桌</strong><button id="language" type="button" lang="en">English</button></div><h1 id="title"></h1><p id="intro"></p></header>
+<nav id="nav" aria-label="Scenes"></nav>
+<section class="scene" aria-labelledby="scene-title"><h2 id="scene-title" tabindex="-1"></h2><p id="brief"></p><div class="facts" id="facts"></div><div class="choices" id="choices"></div><div class="actions" id="actions"></div><div id="result" role="status" aria-live="polite"></div></section>
+<footer id="footer"></footer>
+</main>
+<script>
+"use strict";
+const data = [
+ {id:"scouting", tab:["球探","Scouting"], title:["从两份报告里选一个目标","Choose a scouting target"], brief:["20 岁的林安即战力更强；18 岁的周远上限可观，但评估样本较少。先挑目标，再决定是否复查。","Lin An, 20, is ready to play. Zhou Yuan, 18, could develop further, but his report draws on fewer matches. Pick a target, then decide whether to scout again."],
+ facts:[["球探预算","Scouting budget"],["判断依据","Report basis"]], values:[["€3,000","€3,000"],["比赛样本与球探判断","Match samples and scout judgement"]],
+ choices:[["林安","Lin An","能力 68 · 6 场样本","Ability 68 · 6 matches"],["周远","Zhou Yuan","能力 58 · 2 场样本","Ability 58 · 2 matches"]],
+ actions:[["加入观察名单","Shortlist"],["复查报告 · €1,000","Scout again · €1,000"]],
+ outcomes:[ [["林安已加入观察名单。可尽快为他寻找稳定出场的球队。","Lin An is shortlisted. Look for a club where he can play regularly."],["周远已加入观察名单。保留高潜力判断，但暂不按确定结论定价。","Zhou Yuan is shortlisted. Treat the upside as provisional when assessing offers."]], [["新增两场观察，评级维持。剩余预算 €2,000。","Two more matches reviewed. The rating holds. Budget left: €2,000."],["样本增加，判断由低置信度升为中等。剩余预算 €2,000。","More match footage raises confidence from low to moderate. Budget left: €2,000."]] ]},
+ {id:"offers", tab:["球队报价","Club offers"], title:["三份报价，一次取舍","Three offers, one decision"], brief:["为林安比较不同球队。反报价统一加 €2,000 周薪，花费 €1,500；即使被拒也计费。","Compare offers for Lin An. A counter adds €2,000 per week and costs €1,500, even if the club declines."],
+ facts:[["当前周薪","Current wage"],["谈判预算","Negotiation budget"]],values:[["€7,000","€7,000"],["€3,000","€3,000"]],
+ choices:[["北岸竞技","Northshore Athletic","€12,000／周 · 4 年 · 替补","€12,000/wk · 4 years · Substitute"],["橡桥城","Oakbridge City","€9,500／周 · 3 年 · 轮换","€9,500/wk · 3 years · Rotation"],["港湾联","Harbour United","€7,800／周 · 2 年 · 首发","€7,800/wk · 2 years · Starter"]],
+ actions:[["接受当前报价","Accept listed terms"],["提交反报价","Send counteroffer"]],
+ outcomes:[ [["北岸签约：€12,000／周。收入最高，预计出场较少。","Signed with Northshore: €12,000/wk. Highest wage, fewer projected minutes."],["橡桥签约：€9,500／周。保留轮换机会。","Signed with Oakbridge: €9,500/wk with rotation minutes."],["港湾签约：€7,800／周。较低收入换取首发机会。","Signed with Harbour: €7,800/wk in exchange for a starting role."]], [["北岸拒绝 €14,000／周。预算剩 €1,500，未签约。","Northshore declined €14,000/wk. Budget left: €1,500. No deal."],["橡桥接受 €11,500／周。预算剩 €1,500，签约成功。","Oakbridge accepted €11,500/wk. Budget left: €1,500. Deal signed."],["港湾拒绝 €9,800／周。预算剩 €1,500，未签约。","Harbour declined €9,800/wk. Budget left: €1,500. No deal."]] ]},
+ {id:"training", tab:["训练配置","Training"], title:["把有限名额留给谁？","Who gets the focus slot?"], brief:["两个客户都在训练，事务所只有一个重点培养名额。不要把成长预期当成保证。","Both clients train, but there is only one focus slot. Growth forecasts are not guarantees."],
+ facts:[["可用名额","Focus slots"],["赛季训练储备","Season reserve"]], values:[["1","1"],["€18,000","€18,000"]],
+ choices:[["林安","Lin An","轮换中场 · 可能小幅提高","Rotation midfielder · modest upside"],["周远","Zhou Yuan","年轻前锋 · 可能显著提高","Young striker · significant upside"]],
+ actions:[["设为重点培养","Assign focus slot"],["购入第二名额 · €12,000","Buy second slot · €12,000"]],
+ outcomes:[ [["林安使用唯一名额。周远保持常规训练。","Lin An takes the slot. Zhou Yuan stays on regular training."],["周远使用唯一名额。林安保持常规训练。","Zhou Yuan takes the slot. Lin An stays on regular training."]], [["两人均可重点培养。储备剩 €6,000，额外名额赛季末到期。","Both can receive focused training. Reserve: €6,000. The extra slot expires this season."],["两人均可重点培养。储备剩 €6,000，额外名额赛季末到期。","Both can receive focused training. Reserve: €6,000. The extra slot expires this season."]] ]},
+ {id:"contracts", tab:["合同到期","Expiry"], title:["代理合同和球队合同分开处理","Two contracts, separate outcomes"], brief:["林安的代理协议本周到期，但他的球队合同还有一年。选择事务所如何处理。","Lin An's representation agreement expires this week. His club contract still has a year to run."],
+ facts:[["代理合同","Representation"],["球队合同","Club contract"]],values:[["本周到期","Expires this week"],["剩余 1 年","1 year remaining"]],
+ choices:[["接受续约条件","Agree renewal","三年代理 · 佣金 7%","3 years of representation · 7% commission"],["不续代理","Let it expire","停止佣金与专属服务","Commission and agency services end"]],
+ actions:[["处理到期","Resolve expiry"]],
+ outcomes:[ [["已续代理三年。球队合同仍有一年，条款不变。","Representation renewed for three years. Club contract unchanged."],["代理关系结束，关闭相关待办。球员仍留在球队。","Representation ended and agency tasks closed. The player stays at his club."]] ]},
+ {id:"saving", tab:["保存重试","Save recovery"], title:["保存失败，不重复推进","Retry the save without advancing twice"], brief:["模拟第 18 周结算。第一次写入失败，点击重试应保存同一周快照，而不是再次收取费用。","Simulate Week 18 settlement. The first write fails. Retry should persist the same snapshot without charging again."],
+ facts:[["生涯周数","Career week"],["可用现金","Cash"],["写入状态","Write status"]],values:[["17","17"],["€30,000","€30,000"],["等待结算","Ready"]],
+ choices:[],actions:[],outcomes:[]},
+ {id:"milestone", tab:["生涯结算","Career review"], title:["把经营过程整理成个人战报","Turn a career into a personal review"], brief:["查看两个里程碑的模拟快照。生涯评分是个人记录，结算后仍然可以继续经营。","Inspect two fictional milestone snapshots. Scores are personal records; settlement doesn't end the career."],
+ facts:[["当前阶段","Current stage"],["记录范围","Record scope"]],values:[["赛季回顾","Career review"],["仅本地记录","Local record only"]],
+ choices:[["五年回顾","Five-year review","18 笔交易 · 8 名客户","18 deals · 8 clients"],["十年回顾","Ten-year review","41 笔交易 · 14 名客户","41 deals · 14 clients"]],
+ actions:[["生成模拟战报","Generate sample review"]],
+ outcomes:[ [["五年：1,240 生涯分 · 现金 €240,000 · 可继续经营。","Five years: 1,240 career points · €240,000 cash · Career can continue."],["十年：3,180 生涯分 · 现金 €730,000 · 可继续经营。","Ten years: 3,180 career points · €730,000 cash · Career can continue."]] ]}
+];
+const by = id => document.getElementById(id);
+const copy = {
+ title:["合同之外的决定","Beyond the contract"],
+ intro:["转会桌交互展厅。选择一个场景，亲手完成一项经纪人决策。场景可独立重玩，切换语言会保留当前选择。","An interactive Transfer Desk showcase. Pick a scene and make an agent's decision. Every scene can be replayed, and switching languages keeps your choices."],
+ footer:["独立作品集演示 · 虚构数据与简化规则 · 不加载正式游戏源码或存档","Standalone portfolio demo · Fictional data and simplified rules · No production code or saves"],
+ ready:["选择一项操作查看结果。","Choose an action to see the result."],
+ reset:["重置场景","Reset scene"],
+ settle:["推进并结算","Advance and settle"],
+ retry:["重试保存","Retry save"],
+ fail:["第 18 周已结算，支出 €2,000。模拟写入失败，快照仍保留。","Week 18 settled with a €2,000 expense. The simulated write failed; the snapshot is retained."],
+ done:["第 18 周保存成功。现金仍为 €28,000，费用只扣了一次。","Week 18 saved. Cash remains €28,000; the expense was charged only once."],
+ failure:["写入失败","Write failed"], success:["已保存","Saved"]
+};
+let lang=0, scene=0;
+const blank=()=>({choice:0, action:null, save:0});
+const states=data.map(blank);
+function button(label,fn,attrs={}) {
+ const b=document.createElement("button"); b.type="button"; b.textContent=label;
+ for(const [k,v] of Object.entries(attrs)) b.setAttribute(k,String(v));
+ b.addEventListener("click",fn); return b;
+}
+function render(focus) {
+ const s=data[scene], st=states[scene];
+ document.documentElement.lang=lang?"en":"zh-CN";
+ document.title=lang?"Transfer Desk · Interactive Showcase":"转会桌 · 交互展厅";
+ by("language").textContent=lang?"中文":"English";
+ by("language").lang=lang?"zh-CN":"en";
+ by("title").textContent=copy.title[lang];
+ by("intro").textContent=copy.intro[lang];
+ by("footer").textContent=copy.footer[lang];
+ by("nav").setAttribute("aria-label",lang?"Showcase scenes":"展示场景");
+ by("nav").replaceChildren(...data.map((x,i)=>button(x.tab[lang],()=>{scene=i;render("scene-title")},{"aria-current":i===scene,"data-scene":x.id})));
+ by("scene-title").textContent=s.title[lang];
+ by("brief").textContent=s.brief[lang];
+ by("facts").replaceChildren(...s.facts.map((f,i)=>{
+   const item=document.createElement("div");item.className="fact";
+   const label=document.createElement("span"), value=document.createElement("strong");
+   label.textContent=f[lang];
+   value.textContent=s.id==="saving"&&st.save ? ["18","€28,000",copy[st.save===1?"failure":"success"][lang]][i] : s.values[i][lang];
+   item.append(label,value);return item;
+ }));
+ by("choices").replaceChildren(...s.choices.map((o,i)=>{
+   const b=button("",()=>{if(st.action===null){st.choice=i;render("choice-"+i)}},{id:"choice-"+i,class:"choice","aria-pressed":i===st.choice});
+   b.disabled=st.action!==null; const label=document.createElement("strong"), detail=document.createElement("span");
+   label.textContent=o[lang];detail.textContent=o[lang+2];b.append(label,detail);return b;
+ }));
+ let result=copy.ready[lang], buttons=[];
+ if(s.id==="saving"){
+   if(st.save<2)buttons.push(button(copy[st.save?"retry":"settle"][lang],()=>{st.save++;render(st.save===2?"reset":"save-action")},{id:"save-action",class:"primary"}));
+   if(st.save)result=copy[st.save===1?"fail":"done"][lang];
+ }else{
+   buttons=s.actions.map((a,i)=>{
+     const b=button(a[lang],()=>{if(st.action===null){st.action=i;render("reset")}},{id:"action-"+i,class:i===0?"primary":""});
+     b.disabled=st.action!==null;return b;
+   });
+   if(st.action!==null)result=s.outcomes[st.action][st.choice][lang];
+ }
+ buttons.push(button(copy.reset[lang],()=>{states[scene]=blank();render(s.id==="saving"?"save-action":"choice-0")},{id:"reset"}));
+ by("actions").replaceChildren(...buttons);by("result").textContent=result;
+ if(focus)by(focus)?.focus();
+}
+by("language").addEventListener("click",()=>{lang=1-lang;render("language")});
+render();
+</script>
+</html>
