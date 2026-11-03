@@ -1,35 +1,63 @@
-# Development notes · 开发案例
+# 开发案例 / Development case studies
 
-## 球员成长与职业路径 / Player development
+[中文](#中文) · [English](#english)
 
-**问题。** 玩家发现早期潜力球员成长慢，强队也容易给出没有实质差异的替补报价。只提高成长速度会放大低水平联赛刷成长的问题。
+## 中文
 
-**设计。** 分开处理当前能力、潜力判断和出场环境；报价同时展示薪资、球队角色和出场机会。球探报告描述对潜力的判断，而不是公布隐藏数值。对于缺少出场或明显低薪的客户，增加明确的职业诉求和主动推荐入口。
+### 球员成长与职业路径
 
-**取舍。** 高工资、强队名气和成长机会可以指向不同球队。玩家要能理解取舍，而不是只比较一个综合分数。公开谈判演示沿用这一选择结构，使用独立的虚构数据和简化规则。
+**问题。** 潜力球员成长偏慢，强队报价也容易集中在替补。简单提高成长速度，会放大低水平联赛刷成长的问题。
 
-**In English.** I separated present ability, scouting confidence and development opportunity so choosing a club is not simply maximizing salary. The demo illustrates that decision without exposing the production simulation.
+**设计。** 分开处理当前能力、潜力判断和出场环境。报价同时展示薪资、角色和出场机会；球探报告表达判断及其可信度。缺少出场或明显低薪的客户会提出职业诉求，玩家可以主动推荐客户。
 
-## 长期存档 / Long-running saves
+**取舍。** 高薪、球队名气和成长机会可以指向不同球队。交互展厅保留这一选择结构，但使用虚构数据和简化规则。
 
-**问题。** 历史版本的长生涯可能触及容量限制，损坏的旧档也曾影响新建流程。保存重试尤其危险：它可能把同一周的收入或费用结算两遍。
+### 长期存档
 
-**设计。** 先结算并冻结本周快照，保存失败时重试写入同一快照；以回读核验结果区分写入成功和可恢复。独立档位隔离异常存档，长期记录保留有界的汇总和必要的近期明细。
+**问题。** 长生涯可能触及容量限制，坏档曾影响新建流程；保存重试如果再做一次结算，可能重复扣费。
 
-**验证。** 分别检查旧档迁移、长生涯、故障后的重新保存和重新打开游戏。平台模拟和浏览器测试各有边界，模拟通过不等于原生环境已验证。
+**设计。** 先结算并冻结本周快照，失败后重试同一份写入；回读用于核验。档位独立，长期记录保留有界汇总和必要的近期明细。
 
-**In English.** The save boundary separates game advancement from persistence. Retrying a failed write must not advance time, while an unreadable slot must not prevent a new career in another slot.
+**验证。** 分开测试旧档迁移、长生涯、写入故障后的重试和重新打开。浏览器和平台模拟的通过结果不等于原生平台已经验证。
 
-## 双语离线版 / Bilingual offline edition
+### 双语离线版
 
-**问题。** 原版的登录、广告和在线排名使一部分流程依赖平台环境。离线版需要保留单人生涯，同时让游戏内选择仍然可用。
+**问题。** 原版的登录、广告和在线排名依赖平台环境。
 
-**设计。** 移除联机依赖，将额外机会改成游戏内预算或行动次数，保留本地结算和 PNG 导出。语言设置独立于生涯状态；两种语言读写同一套存档。
+**设计。** 移除联机入口，把额外机会改成游戏内预算或行动次数，保留本地评分和 PNG 海报。语言偏好与生涯状态分离，两种语言共用同一套存档。
 
-**验证。** 完整发行 ZIP 解压后做过 9 项本地测试，覆盖手机布局、跨语言保存和继续、每周推进、游戏内解锁与 PNG 下载。测试中阻断网络，并检查未发起外部请求。这个数字描述当时的完整版回归；展示演示有单独的测试。
+**验证。** 完整发行 ZIP 解压后做过 9 项本地测试，覆盖手机布局、跨语言继续、推进、游戏内解锁和 PNG 下载。测试阻断网络，并检查未发起外部请求。展厅另行测试。
 
-**In English.** I replaced platform rewards with game resources and verified the extracted offline package under blocked network access. The public demo is a separate, smaller artifact.
+### 代码示例
 
-## Public code sample
+[谈判规则](../demo/negotiation.js)与界面分离：验证加薪额度、只为符合条件的反报价扣费，并拒绝重复提交。运行 `node --test tests/negotiation.test.cjs` 可执行示例测试。
 
-[`demo/negotiation.js`](../demo/negotiation.js) separates contract rules from the DOM. The state transition rejects repeat submissions, validates the requested raise and charges only an eligible counteroffer. Run the sample tests with `node --test tests/negotiation.test.cjs`.
+## English
+
+### Player development and career paths
+
+**Problem.** Prospects developed slowly, and offers from strong clubs tended to make them substitutes. Simply boosting development would make it easier to farm growth in weaker leagues.
+
+**Design.** Separate current ability, assessed potential and the player's playing environment. Show wages, squad role and playing opportunities side by side. Scout reports communicate assessments and confidence. Underplayed or clearly underpaid clients can raise career concerns, and the agent can proactively recommend them to clubs.
+
+**Trade-off.** Wages, prestige and development can point to different clubs. The interactive showcase preserves this choice structure with fictional data and simplified rules.
+
+### Long-running saves
+
+**Problem.** Long careers could hit storage limits, a bad save could block a new career, and retrying a failed save could charge the same week twice if settlement ran again.
+
+**Design.** Settle once and freeze the weekly snapshot. Retry writing that snapshot and verify by reading it back. Keep slots independent, and bound long-term records using summaries and relevant recent details.
+
+**Verification.** Test old-save migration, long careers, retries after write failures and reopening separately. Browser and simulated platform results do not stand in for native-platform verification.
+
+### Bilingual offline edition
+
+**Problem.** Sign-in, ads and online rankings in the original build depended on the platform.
+
+**Design.** Remove online entry points and use in-game budgets or actions for optional opportunities. Keep local scores and PNG posters. Language preference is separate from career state; both languages use the same saves.
+
+**Verification.** Nine local checks on the extracted full-game ZIP covered mobile layouts, resuming across languages, advancing time, unlocking options with game resources and downloading PNGs. The tests blocked network access and checked for external requests. The showcase is tested separately.
+
+### Code sample
+
+The [negotiation rules](../demo/negotiation.js) are separate from the UI. They validate the requested raise, charge only eligible counteroffers and prevent duplicate submissions. Run `node --test tests/negotiation.test.cjs` to exercise the sample.

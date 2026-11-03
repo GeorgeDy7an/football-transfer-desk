@@ -3,16 +3,18 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>转会桌 · 交互展厅</title>
 <style>
-:root{color-scheme:light;--ink:#142e29;--muted:#435d54;--line:#a4b7ad;--paper:#f2f5ed;--white:#fff;--pitch:#0d4437;--lime:#c9e882;--focus:#155ca0;font:16px/1.55 system-ui,sans-serif;color:var(--ink);background:var(--paper)}
-*{box-sizing:border-box}body{margin:0}main{width:min(100% - 2rem,74rem);margin:auto;padding:1rem 0 3rem}header{padding:clamp(1.25rem,4vw,3rem);border-radius:18px 18px 0 0;background:var(--pitch);color:var(--white);position:relative;overflow:hidden}header:after{content:"";border:1px solid #83ad9a;border-radius:50%;width:230px;height:230px;position:absolute;right:-115px;bottom:-94px;pointer-events:none}header h1{font-size:clamp(2rem,7vw,4rem);line-height:1.05;margin:.75rem 0}header p{max-width:58ch;margin:0}small{font-size:.85rem}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}button{font:inherit;min-height:44px;border:1px solid var(--line);border-radius:8px;background:var(--white);color:var(--ink);padding:.5rem .75rem;text-align:left;cursor:pointer}button:disabled{cursor:default;opacity:.6}button:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:3px}header button:focus-visible{outline-color:var(--lime)}
-nav{display:flex;gap:8px;flex-wrap:wrap;padding:.85rem 0}nav button[aria-current=true],.primary{background:var(--lime);border-color:var(--pitch);font-weight:750}.scene{background:var(--white);padding:clamp(1rem,3vw,2rem);border:1px solid var(--line);border-radius:12px}h2{font-size:clamp(1.55rem,4vw,2.1rem);margin:0}p{margin:.6rem 0}.scene p{max-width:68ch}.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,12rem),1fr));gap:8px;margin:1rem 0}.fact{padding:.8rem 1rem;background:var(--paper);border-left:3px solid var(--pitch);min-width:0}.fact span,.choice span{display:block;color:var(--muted)}.fact strong{display:block;font-size:1.15rem;overflow-wrap:anywhere}
-.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr));gap:10px;margin:1rem 0}.choice{padding:.8rem}.choice strong{display:block}.choice[aria-pressed=true]{border:2px solid var(--pitch);padding:calc(.8rem - 1px);background:#eaf4d6}.actions{display:flex;flex-wrap:wrap;gap:8px;margin:1rem 0}#result{padding:.8rem 1rem;margin-top:1rem;border-left:4px solid var(--pitch);background:var(--paper);min-height:3rem}footer{color:var(--muted);margin-top:1rem}button:active:not(:disabled){filter:brightness(.94)}
+:root{color-scheme:light;--navy:#14263e;--deep:#0a1625;--tile:#102236;--blue:#1e3a5a;--gold:#e1c49a;--ink:#15273e;--muted:#4d5f73;--line:#c6d2df;--paper:#f1f4f7;--white:#fff;--focus:#1b64a1;font:16px/1.45 system-ui,sans-serif;color:var(--ink);background:#dfe6ee}
+*{box-sizing:border-box}body{margin:0}main{width:min(100%,45rem);min-height:100dvh;margin:auto;display:flex;flex-direction:column;background:var(--paper);box-shadow:0 0 40px #15273e24}header{display:flex;align-items:center;gap:10px;padding:.6rem .8rem;background:var(--navy);color:#fff}header button{background:#21384f;color:#fff;border-color:#697c91}header .brand{min-width:0;flex:1}header .brand strong,header .brand small{display:block}header .brand small{color:#d5e0eb;overflow-wrap:anywhere}header button:focus-visible,.office button:focus-visible{outline-color:var(--gold)}
+button{font:inherit;min-height:44px;border:1px solid var(--line);border-radius:9px;background:var(--white);color:var(--ink);padding:.55rem .8rem;text-align:left;cursor:pointer}button:disabled{cursor:default;opacity:.58}button:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}button:active:not(:disabled){filter:brightness(.9)}.primary{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:750}
+.office{flex:1;color:white;background:radial-gradient(ellipse at 72% 0,#3f4144 0,var(--deep) 45%);padding:1rem .8rem}.office h1{font-size:clamp(1.7rem,6vw,2.4rem);margin:.18rem 0}.office .edition{color:var(--gold);font-weight:750}.office p{color:#d6e1ec;margin:.4rem 0 1rem;max-width:56ch}.office nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.office nav button{min-height:92px;background:var(--tile);color:white;border-color:#4a5e73;display:flex;align-items:center;gap:10px}.office nav button:first-child{grid-column:1/-1;background:#172e46;min-height:70px}.office nav button strong,.office nav button small{display:block}.office nav button small{color:#c4d1e0;line-height:1.3}.glyph{display:grid;place-items:center;flex:0 0 34px;height:34px;border:1px solid #607086;border-radius:8px;background:#243348;color:var(--gold)}.glyph svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.scene{flex:1;padding:1rem .85rem 1.25rem}h2{font-size:clamp(1.4rem,4vw,1.8rem);margin:0}.scene p{margin:.4rem 0;color:var(--muted)}.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,9rem),1fr));gap:8px;margin:.85rem 0}.fact{padding:.75rem;background:#e4ebf3;border:1px solid #d3deea;border-radius:10px;min-width:0}.fact span,.choice span{display:block;color:var(--muted);font-size:.9rem}.fact strong{display:block;font-size:1.05rem;overflow-wrap:anywhere}
+.choices{display:grid;gap:8px;margin:.8rem 0}.choice{padding:.75rem;border-left:4px solid #a0b3c9}.choice strong{display:block}.choice[aria-pressed=true]{border-color:var(--blue);background:#e6eef9}.actions{display:flex;flex-wrap:wrap;gap:8px;margin:.8rem 0}#result{padding:.75rem .8rem;margin-top:.8rem;border-left:4px solid var(--blue);background:#fff;border-radius:0 8px 8px 0;min-height:3rem}footer{display:flex;flex-wrap:wrap;gap:8px;padding:.6rem .8rem max(.6rem,env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line)}footer button{text-align:center}footer small{flex:1 0 100%;color:var(--muted);font-size:.8rem}[hidden]{display:none!important}
 </style>
 <main>
-<header><div class="top"><strong>Transfer Desk / 转会桌</strong><button id="language" type="button" lang="en">English</button></div><h1 id="title"></h1><p id="intro"></p></header>
-<nav id="nav" aria-label="Scenes"></nav>
-<section class="scene" aria-labelledby="scene-title"><h2 id="scene-title" tabindex="-1"></h2><p id="brief"></p><div class="facts" id="facts"></div><div class="choices" id="choices"></div><div class="actions" id="actions"></div><div id="result" role="status" aria-live="polite"></div></section>
-<footer id="footer"></footer>
+<header><button id="home" type="button"></button><div class="brand"><strong>Transfer Desk / 转会桌</strong><small id="context"></small></div><button id="language" type="button" lang="en">English</button></header>
+<section class="office" id="office"><small class="edition" id="edition"></small><h1 id="title" tabindex="-1"></h1><p id="intro"></p><nav id="nav" aria-label="Scenes"></nav></section>
+<section class="scene" id="scene" hidden aria-labelledby="scene-title"><h2 id="scene-title" tabindex="-1"></h2><p id="brief"></p><div class="facts" id="facts"></div><div class="choices" id="choices"></div><div class="actions" id="actions"></div><div id="result" role="status" aria-live="polite"></div></section>
+<footer><button id="back" type="button" hidden></button><button id="next" type="button" class="primary" hidden></button><small id="footer"></small></footer>
 </main>
 <script>
 "use strict";
@@ -48,7 +50,7 @@ const data = [
 ];
 const by = id => document.getElementById(id);
 const copy = {
- title:["合同之外的决定","Beyond the contract"],
+ title:["经纪人办公室","Agency Office"],
  intro:["转会桌交互展厅。选择一个场景，亲手完成一项经纪人决策。场景可独立重玩，切换语言会保留当前选择。","An interactive Transfer Desk showcase. Pick a scene and make an agent's decision. Every scene can be replayed, and switching languages keeps your choices."],
  footer:["独立作品集演示 · 虚构数据与简化规则 · 不加载正式游戏源码或存档","Standalone portfolio demo · Fictional data and simplified rules · No production code or saves"],
  ready:["选择一项操作查看结果。","Choose an action to see the result."],
@@ -59,7 +61,24 @@ const copy = {
  done:["第 18 周保存成功。现金仍为 €28,000，费用只扣了一次。","Week 18 saved. Cash remains €28,000; the expense was charged only once."],
  failure:["写入失败","Write failed"], success:["已保存","Saved"]
 };
-let lang=0, scene=0;
+const navNotes=[
+ ["考察球员与复查报告","Scout players and review reports"],
+ ["合同与出场机会","Contracts and playing time"],
+ ["重点培养与储备","Development slots and reserves"],
+ ["代理合同与续约","Representation and renewals"],
+ ["周结算与存档核验","Weekly settlement and save checks"],
+ ["个人里程碑与战报","Personal milestones and reviews"]
+];
+const iconPaths=[
+ '<circle cx="10" cy="10" r="5"/><path d="m14 14 5 5"/>',
+ '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V4h8v3M3 12h18"/>',
+ '<path d="M4 19h16M6 15l5-5 3 3 5-8m-4 0h4v4"/>',
+ '<path d="M6 3h9l3 3v15H6zM9 10h6m-6 4h6m-6 4h4"/>',
+ '<path d="M5 3h12l3 3v15H4V3zm3 0v6h8V3M8 21v-8h8v8"/>',
+ '<path d="M4 4v16h16M8 16v-4m4 4V8m4 8V5"/>'
+];
+let lang=0, scene=-1;
+const openScene=(i,focus)=>{scene=i;render(focus||(i<0?"title":"scene-title"));};
 const blank=()=>({choice:0, action:null, save:0});
 const states=data.map(blank);
 function button(label,fn,attrs={}) {
@@ -76,8 +95,25 @@ function render(focus) {
  by("title").textContent=copy.title[lang];
  by("intro").textContent=copy.intro[lang];
  by("footer").textContent=copy.footer[lang];
+ by("context").textContent=lang?"Agent career · interactive demo":"经纪人生涯 · 交互演示";
+ by("edition").textContent=lang?"Office handover":"事务所交接";
+ by("home").textContent=lang?"Office":"办公室";
+ by("back").textContent=lang?"Back to office":"返回办公室";
+ by("next").textContent=lang?"Next scene":"下一场景";
+ by("office").hidden=scene>=0;
+ by("scene").hidden=scene<0;
+ by("back").hidden=by("next").hidden=scene<0;
+ by("home").disabled=scene<0;
  by("nav").setAttribute("aria-label",lang?"Showcase scenes":"展示场景");
- by("nav").replaceChildren(...data.map((x,i)=>button(x.tab[lang],()=>{scene=i;render("scene-title")},{"aria-current":i===scene,"data-scene":x.id})));
+ by("nav").replaceChildren(...data.map((x,i)=>{
+   const b=button("",()=>openScene(i),{"data-scene":x.id});
+   const icon=document.createElement("span");icon.className="glyph";icon.setAttribute("aria-hidden","true");
+   icon.innerHTML='<svg viewBox="0 0 24 24">'+iconPaths[i]+'</svg>';
+   const text=document.createElement("span"), title=document.createElement("strong"), note=document.createElement("small");
+   title.textContent=x.tab[lang];note.textContent=navNotes[i][lang];text.append(title,note);b.append(icon,text);
+   return b;
+ }));
+ if(!s){if(focus)by(focus)?.focus();return;}
  by("scene-title").textContent=s.title[lang];
  by("brief").textContent=s.brief[lang];
  by("facts").replaceChildren(...s.facts.map((f,i)=>{
@@ -107,6 +143,9 @@ function render(focus) {
  by("actions").replaceChildren(...buttons);by("result").textContent=result;
  if(focus)by(focus)?.focus();
 }
+by("home").addEventListener("click",()=>openScene(-1));
+by("back").addEventListener("click",()=>openScene(-1));
+by("next").addEventListener("click",()=>openScene((scene+1)%data.length));
 by("language").addEventListener("click",()=>{lang=1-lang;render("language")});
 render();
 </script>
